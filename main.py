@@ -13,16 +13,6 @@ p = Population.Population([
 
 
 
-p.fitness()
-
-print([i.genes for i in p.chromosomes])
-while p.generation < 100:
-    p.selection()
-    p.crossover()
-    p.mutation()
-    p.fitness()
-    
-p.showResult()
 
 
 
