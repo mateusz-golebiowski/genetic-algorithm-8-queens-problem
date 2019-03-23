@@ -11,7 +11,7 @@ p = Population.Population([
     Chromosome.Chromosome([3,2,6,5,4,2,2,1])
 ])
 
-
+p.run()
 
 
 

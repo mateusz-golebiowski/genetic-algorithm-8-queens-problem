@@ -12,10 +12,13 @@ class Population:
         self.generation = 0
         self.initialPopulation = self
 
+        self.plots = []
+        self.dots = []
+        
+        
+        
+    def run(self):
         self.showResult()
-        
-        
-
 
     def fitness(self):
         print("Fitness computing...")
@@ -63,7 +66,7 @@ class Population:
         return [x, y]
 
 
-    def run(self,data):
+    def okButtonClicked(self,data):
         self.fitness()
 
         print([i.genes for i in self.chromosomes])
@@ -72,69 +75,28 @@ class Population:
             self.crossover()
             self.mutation()
             self.fitness()
-        data = self.genReport(self.chromosomes[0].genes)
-        self.line1.set_ydata(data[1])
 
-        data = self.genReport(self.chromosomes[1].genes)
-        self.line2.set_ydata(data[1])
+        for i in range(0,4):
+            data = self.genReport(self.chromosomes[i].genes)
+            self.dots[i].set_ydata(data[1])
 
-        data = self.genReport(self.chromosomes[2].genes)
-        self.line3.set_ydata(data[1])
-
-        data = self.genReport(self.chromosomes[3].genes)
-        self.line4.set_ydata(data[1])
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
 
     def showResult(self):
-        self.fig = plt.figure(figsize=(10, 6))
-
-
-        data = self.genReport(self.chromosomes[0].genes)
-       
-        self.sub1 = plt.subplot(2, 2, 1)
-     
-        self.line1, = self.sub1.plot(data[0], data[1], "ro")
-        self.sub1.axis([1, 9, 1, 9])
-        self.sub1.grid(True)
-        plt.setp(self.sub1.get_xticklabels(), visible=False)
-        plt.setp(self.sub1.get_yticklabels(), visible=False)
-        self.sub1.tick_params(axis='both', which='both', length=0)
-
-        data = self.genReport(self.chromosomes[1].genes)
-       
-        self.sub2 = plt.subplot(2, 2, 2)
-     
-        self.line2, = self.sub2.plot(data[0], data[1], "ro")
-        self.sub2.axis([1, 9, 1, 9])
-        self.sub2.grid(True)
-        plt.setp(self.sub2.get_xticklabels(), visible=False)
-        plt.setp(self.sub2.get_yticklabels(), visible=False)
-        self.sub2.tick_params(axis='both', which='both', length=0)
-
-    
+        self.fig = plt.figure(figsize=(12, 6))
         
-
-        data = self.genReport(self.chromosomes[2].genes)
-       
-        self.sub3 = plt.subplot(2, 2, 3)
-     
-        self.line3, = self.sub3.plot(data[0], data[1], "ro")
-        self.sub3.axis([1, 9, 1, 9])
-        self.sub3.grid(True)
-        plt.setp(self.sub3.get_xticklabels(), visible=False)
-        plt.setp(self.sub3.get_yticklabels(), visible=False)
-        self.sub3.tick_params(axis='both', which='both', length=0)
-
-
-        data = self.genReport(self.chromosomes[3].genes)
-       
-        self.sub4 = plt.subplot(2, 2, 4)
-     
-        self.line4, = self.sub4.plot(data[0], data[1], "ro")
-        self.sub4.axis([1, 9, 1, 9])
-        self.sub4.grid(True)
-        plt.setp(self.sub4.get_xticklabels(), visible=False)
-        plt.setp(self.sub4.get_yticklabels(), visible=False)
-        self.sub4.tick_params(axis='both', which='both', length=0)
+        for i in range(0,4):
+            print(i)
+            data = self.genReport(self.chromosomes[0].genes)
+            self.plots.append(plt.subplot(2, 2, i+1))
+            line, = self.plots[i].plot(data[0], data[1], "ro")
+            self.dots.append(line)
+            self.plots[i].axis([1, 9, 1, 9])
+            self.plots[i].grid(True)
+            plt.setp(self.plots[i].get_xticklabels(), visible=False)
+            plt.setp(self.plots[i].get_yticklabels(), visible=False)
+            self.plots[i].tick_params(axis='both', which='both', length=0)
 
         self.axbox = plt.axes([0.1, 0.01, 0.4, 0.05])
         self.text_box = TextBox(self.axbox, 'Generation', initial="10")
@@ -142,8 +104,11 @@ class Population:
 
         self.axbutton = plt.axes([0.81, 0.01, 0.04, 0.05])
         self.button = Button(self.axbutton, 'ok')
-        self.button.on_clicked(self.run)
+        self.button.on_clicked(self.okButtonClicked)
 
         self.axCheck = plt.axes([0.7, -0.03, 0.07, 0.15], zorder=-1, frameon=False)
         self.check = CheckButtons(self.axCheck, ["Mutation"], [0])
+
+        mng = plt.get_current_fig_manager()
+        mng.window.state('zoomed')
         plt.show()
