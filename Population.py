@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 from matplotlib.widgets import CheckButtons
 from matplotlib.widgets import TextBox
+from matplotlib.backends.backend_pdf import PdfPages
 from random import randint
+import datetime
 
 import Chromosome
 
@@ -11,23 +13,25 @@ class Population:
         self.chromosomes = chromosomes
         self.selected = []
         self.generation = 0
-        self.initialPopulation = self
+        self.initialPopulation = self.chromosomes.copy()
 
         self.plots = []
         self.dots = []
         self.endGeneration = 10
         self.doMutation = False
+
+        
         
     def run(self):
         self.showResult()
 
     def fitness(self):
-        print("Fitness computing...")
+        #print("Fitness computing...")
         for ch in self.chromosomes:
             ch.computeFitness()
 
     def selection(self):
-        print("Generation: {}".format(self.generation+1))
+        #print("Generation: {}".format(self.generation+1))
         self.selected = []
         for g in range(0,3):
             m = max([ i.fitness for i in self.chromosomes])
@@ -37,12 +41,12 @@ class Population:
                     self.selected.append(ch)
                     self.chromosomes.remove(ch)
                     added = True
-        print("Selected chromosomes")
+        #print("Selected chromosomes")
         show =[i.genes for i in self.selected]
-        print(show)
+        #print(show)
                     
     def crossover(self):
-        print("Crossover...")
+        #print("Crossover...")
         self.chromosomes = [
             Chromosome.Chromosome(self.selected[0].genes[:4]+self.selected[1].genes[4:]),
             Chromosome.Chromosome(self.selected[1].genes[:4]+self.selected[0].genes[4:]),
@@ -50,21 +54,21 @@ class Population:
             Chromosome.Chromosome(self.selected[2].genes[:4]+self.selected[0].genes[4:]),
 
         ]
-        print("Population after crossover: ")
+        #print("Population after crossover: ")
         
-        print([i.genes for i in self.chromosomes])
+        #print([i.genes for i in self.chromosomes])
 
         self.generation +=1
 
     def mutation(self):
-        print("Mutation...")
+        #print("Mutation...")
         ch = randint(0, 3)
         gene = randint(0, 7)
         oldValue = self.chromosomes[ch].genes[gene]
         while oldValue == self.chromosomes[ch].genes[gene]:
             self.chromosomes[ch].genes[gene] = randint(1, 8)
-        print("Population after mutation")
-        print([i.genes for i in self.chromosomes])
+        #print("Population after mutation")
+        #print([i.genes for i in self.chromosomes])
 
     def genReport(self, genes):
         x = [1.5 ,2.5, 3.5, 4.5, 5.5, 6.5, 7.5 ,8.5]
@@ -74,9 +78,19 @@ class Population:
 
 
     def okButtonClicked(self,data):
+        now = datetime.datetime.now()
+        self.pp = PdfPages('result({}-{}-{} {}.{}.{}).pdf'.format(now.year, now.month, now.day, now.hour, now.minute, now.second))
+        
+        self.axbutton.set_visible(False)
+        self.axbox.set_visible(False)
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+        self.pp.savefig(self.fig)
+        
+        print([i.genes for i in self.chromosomes])
+
         self.fitness()
 
-        print([i.genes for i in self.chromosomes])
         while self.generation < self.endGeneration:
             self.selection()
             self.crossover()
@@ -89,9 +103,35 @@ class Population:
         for i in range(0,4):
             data = self.genReport(self.chromosomes[i].genes)
             self.dots[i].set_ydata(data[1])
+            self.plots[i].set_xlabel("Chromosome {}: {}".format(i+1,tuple(self.chromosomes[i].genes)))
+        self.fig.suptitle('{} Generation'.format(self.generation), fontsize=20)
+        self.pp.savefig(self.fig)
+        self.pp.close()
 
+        self.axresbutton.set_visible(True)
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
+
+        print([i.genes for i in self.chromosomes])
+        
+    def restartButtonClicked(self,data):
+        self.chromosomes = self.initialPopulation.copy()
+        
+        for i in range(0,4):
+            data = self.genReport(self.chromosomes[i].genes)
+            self.dots[i].set_ydata(data[1])
+            self.plots[i].set_xlabel("Chromosome {}: {}".format(i+1,tuple(self.chromosomes[i].genes)))
+        
+        self.generation = 0
+        self.endGeneration = 10
+        self.text_box.set_val(10)
+        self.fig.suptitle('Initial Population', fontsize=20)
+        self.axbutton.set_visible(True)
+        self.axbox.set_visible(True)
+        self.axresbutton.set_visible(False)
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+        
 
 
     def mutationCheckbox(self, label):
@@ -101,8 +141,8 @@ class Population:
         self.endGeneration = int(text)
 
     def showResult(self):
-        self.fig = plt.figure(figsize=(12, 6))
-        
+        self.fig = plt.figure(figsize=(120, 60))
+        self.fig.suptitle('Initial Population', fontsize=20)
         for i in range(0,4):
             data = self.genReport(self.chromosomes[i].genes)
             self.plots.append(plt.subplot(2, 2, i+1))
@@ -113,7 +153,7 @@ class Population:
             plt.setp(self.plots[i].get_xticklabels(), visible=False)
             plt.setp(self.plots[i].get_yticklabels(), visible=False)
             self.plots[i].tick_params(axis='both', which='both', length=0)
-            self.plots[i].set_xlabel("1 1 1 1 1 1 1 1")
+            self.plots[i].set_xlabel("Chromosome {}: {}".format(i+1,tuple(self.chromosomes[i].genes)))
 
         self.axbox = plt.axes([0.1, 0.01, 0.2, 0.05])
         self.text_box = TextBox(self.axbox, 'Generation', initial="10")
@@ -126,6 +166,14 @@ class Population:
         self.check = CheckButtons(self.axCheck, ["Mutation"], [0])
         self.check.on_clicked(self.mutationCheckbox)
 
+        self.axresbutton = plt.axes([0.85, 0.01, 0.05, 0.05])
+        self.restartButton = Button(self.axresbutton, 'Restart')
+        self.restartButton.on_clicked(self.restartButtonClicked)
+        self.axresbutton.set_visible(False)
+
         mng = plt.get_current_fig_manager()
         mng.window.state('zoomed')
+
+
+
         plt.show()

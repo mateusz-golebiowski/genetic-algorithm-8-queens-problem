@@ -48,7 +48,7 @@ class Chromosome:
         if x > 1: wrong += self.suma(x)
              
         self.fitness = good - wrong
-        print("For Chromosome: {}".format(self.genes))
-        print("Good: {}".format(good))
-        print("Wrong: {}".format(wrong))
-        print("Fitness: {}".format(self.fitness))
+        #print("For Chromosome: {}".format(self.genes))
+        #print("Good: {}".format(good))
+        #print("Wrong: {}".format(wrong))
+        #print("Fitness: {}".format(self.fitness))
