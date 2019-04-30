@@ -103,7 +103,8 @@ class Population:
         for i in range(0,4):
             data = self.genReport(self.chromosomes[i].genes)
             self.dots[i].set_ydata(data[1])
-            self.plots[i].set_xlabel("Chromosome {}: {}".format(i+1,tuple(self.chromosomes[i].genes)))
+            self.chromosomes[i].computeFitness()
+            self.plots[i].set_xlabel("Chromosome {}: {}\nFitness:{}".format(i+1,tuple(self.chromosomes[i].genes),self.chromosomes[i].fitness))
         self.fig.suptitle('{} Generation'.format(self.generation), fontsize=20)
         self.pp.savefig(self.fig)
         self.pp.close()
@@ -120,11 +121,12 @@ class Population:
         for i in range(0,4):
             data = self.genReport(self.chromosomes[i].genes)
             self.dots[i].set_ydata(data[1])
-            self.plots[i].set_xlabel("Chromosome {}: {}".format(i+1,tuple(self.chromosomes[i].genes)))
+            self.chromosomes[i].computeFitness()
+            self.plots[i].set_xlabel("Chromosome {}: {}\nFitness:{}".format(i+1,tuple(self.chromosomes[i].genes),self.chromosomes[i].fitness))
         
         self.generation = 0
         self.endGeneration = 10
-        self.text_box.set_val(10)
+        #self.text_box.set_val(10)
         self.fig.suptitle('Initial Population', fontsize=20)
         self.axbutton.set_visible(True)
         self.axbox.set_visible(True)
@@ -153,7 +155,8 @@ class Population:
             plt.setp(self.plots[i].get_xticklabels(), visible=False)
             plt.setp(self.plots[i].get_yticklabels(), visible=False)
             self.plots[i].tick_params(axis='both', which='both', length=0)
-            self.plots[i].set_xlabel("Chromosome {}: {}".format(i+1,tuple(self.chromosomes[i].genes)))
+            self.chromosomes[i].computeFitness()
+            self.plots[i].set_xlabel("Chromosome {}: {}\nFitness:{}".format(i+1,tuple(self.chromosomes[i].genes),self.chromosomes[i].fitness))
 
         self.axbox = plt.axes([0.1, 0.01, 0.2, 0.05])
         self.text_box = TextBox(self.axbox, 'Generation', initial="10")
