@@ -1,14 +1,17 @@
 import Chromosome
 import Population
-
-   
+import random
 
 
 p = Population.Population([
-    Chromosome.Chromosome([2,4,1,5,1,5,7,2]),
-    Chromosome.Chromosome([5,2,4,8,2,4,3,1]),
-    Chromosome.Chromosome([2,3,4,1,5,1,2,8]),
-    Chromosome.Chromosome([3,2,6,5,4,2,2,1])
+    Chromosome.Chromosome([random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),
+    random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),random.randint(1, 8)]),
+    Chromosome.Chromosome([random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),
+    random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),random.randint(1, 8)]),
+    Chromosome.Chromosome([random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),
+    random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),random.randint(1, 8)]),
+    Chromosome.Chromosome([random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),
+    random.randint(1, 8),random.randint(1, 8),random.randint(1, 8),random.randint(1, 8)]),
 ])
 
 p.run()

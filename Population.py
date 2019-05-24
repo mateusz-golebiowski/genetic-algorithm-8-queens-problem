@@ -26,12 +26,10 @@ class Population:
         self.showResult()
 
     def fitness(self):
-        #print("Fitness computing...")
         for ch in self.chromosomes:
             ch.computeFitness()
 
     def selection(self):
-        #print("Generation: {}".format(self.generation+1))
         self.selected = []
         for g in range(0,3):
             m = max([ i.fitness for i in self.chromosomes])
@@ -41,12 +39,9 @@ class Population:
                     self.selected.append(ch)
                     self.chromosomes.remove(ch)
                     added = True
-        #print("Selected chromosomes")
         show =[i.genes for i in self.selected]
-        #print(show)
                     
     def crossover(self):
-        #print("Crossover...")
         self.chromosomes = [
             Chromosome.Chromosome(self.selected[0].genes[:4]+self.selected[1].genes[4:]),
             Chromosome.Chromosome(self.selected[1].genes[:4]+self.selected[0].genes[4:]),
@@ -54,21 +49,15 @@ class Population:
             Chromosome.Chromosome(self.selected[2].genes[:4]+self.selected[0].genes[4:]),
 
         ]
-        #print("Population after crossover: ")
-        
-        #print([i.genes for i in self.chromosomes])
 
         self.generation +=1
 
     def mutation(self):
-        #print("Mutation...")
         ch = randint(0, 3)
         gene = randint(0, 7)
         oldValue = self.chromosomes[ch].genes[gene]
         while oldValue == self.chromosomes[ch].genes[gene]:
             self.chromosomes[ch].genes[gene] = randint(1, 8)
-        #print("Population after mutation")
-        #print([i.genes for i in self.chromosomes])
 
     def genReport(self, genes):
         x = [1.5 ,2.5, 3.5, 4.5, 5.5, 6.5, 7.5 ,8.5]
@@ -175,7 +164,6 @@ class Population:
         self.axresbutton.set_visible(False)
 
         mng = plt.get_current_fig_manager()
-        mng.window.state('zoomed')
 
 
 
